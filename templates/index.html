@@ -1,0 +1,28 @@
+<html>
+<head>
+	<title>Home Page</title>
+</head>
+<body>
+	<h1>Tagus drone - Facture</h1>
+	<table>
+		<tr>
+			<th>Quantité</th>
+			<th>Désignation</th>
+			<th>Prix Unitaire</th>
+			<th>Prix totale</th>
+			<th>Référence</th>
+			<th>Date</th>
+		</tr>
+		{% for d in data %}
+			<tr>
+				<td>{{ d['qte'] }}</td>
+				<td>{{ d['label'] }}</td>
+				<td>{{ d['prix_u'] }}</td>
+				<td>{{ d['prix_t'] }}</td>
+				<td>{{ d['ref'] }}</td>
+				<td>{{ d['date_instant'] }}</td>
+			</tr>
+		{% endfor %}
+	</table>
+</body>
+</html>
