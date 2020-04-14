@@ -355,23 +355,16 @@
                      
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Désignation</th>
-                      <th>Prix Unitaire</th>
-                      <th>Quantité</th>
-                      <th>Prix total</th>
-                     
-                    </tr>
-                  </tfoot>
+                  
                   <tbody>
-                    <tr>
-                      <td>Tiger Nixon</td>
-                      <td>System Architect</td>
-                      <td>Edinburgh</td>
-                      <td>61</td>
-                      
-                    </tr>
+                    {% for d in data %}
+                      <tr>
+                        <td>{{ d['label'] }}</td>
+                        <td>{{ d['prix_u'] }}</td>
+                        <td>{{ d['qte'] }}</td>
+                        <td>{{ d['prix_t'] }}</td>
+                      </tr>
+                    {% endfor %}
                     
                  
                   </tbody>
