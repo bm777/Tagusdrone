@@ -6,9 +6,9 @@ class Connection(object):
 	def __init__(self, data = []):
 		data = data
 	def conn(self):
-		return sqlite3.connect('test.db')
+		return sqlite3.connect('tagus.db')
 
-	def create(self, name="test.db"):
+	def create(self, name="tagus.db"):
 		try:
 			conn = self.conn()
 			cursor = conn.cursor()
@@ -46,9 +46,6 @@ class Connection(object):
 			WHERE ref = ?"""
 		cursor.execute(query, (ref,))
 		records = cursor.fetchall()
-		for r in records:
-			print("label : ", r[1])
-			print("registring date : ", r[5])
 		cursor.close()
 
 	def select_all(self):
@@ -57,10 +54,11 @@ class Connection(object):
 		query = """SELECT qte, label, prix_u, prix_t, ref, date_instant FROM TAGUS_DB"""
 		cursor.execute(query)
 		records = cursor.fetchall()
+		l = []
 		for r in records:
-			print("label : ", r[1])
-			print("registring date : ", r[5])
-		cursor.close()
+			l.append({"label":r[1], "prix_u":r[2], "qte":r[0], "prix_t":r[3]})
+			print({"label":r[1], "prix_u":r[2], "qte":r[0], "prix_t":r[3]})
+		return l
 
 if __name__ == '__main__':
 	c = Connection()
@@ -70,5 +68,5 @@ if __name__ == '__main__':
 	c.insert([1, "Drone inspire 2", 900000, 1*600000, "ref-5", datetime.datetime.now()])
 	c.insert([7, "Drone mavic pro", 1000000, 7*60000, "ref-22", datetime.datetime.now()])
 	c.select(ref = "ref-1")
-	c.select_all()
-	print(t)
+	tmp = c.select_all()
+	
