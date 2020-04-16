@@ -1,74 +1,122 @@
 import sqlite3
+from sqlite3 import Error
 import datetime
 
-class Connection(object):
-	"""docstring for Connection"""
+class Connexion(object):
+	"""docstring for Connexion"""
 	def __init__(self, data = []):
-		data = data
-	def conn(self):
-		return sqlite3.connect('test.db')
+		self.data = data
 
-	def create(self, name="test.db"):
+	def create_connection(self):
+		"""
+		Create a database connection to the SQLite daabase
+		specified by db_file
+		:param filename: database file
+		:return: Connection object or none
+		"""
+		conn = None
 		try:
-			conn = self.conn()
-			cursor = conn.cursor()
-			conn.execute('''CREATE TABLE TAGUS_DB
-				(qte INT NOT NULL,
-				label TEXT NOT NULL,
-				prix_u INT NOT NULL,
-				prix_t INT NOT NULL,
-				ref TEXT NOT NULL,
-				date_instant timestamp);''')
-			print("table already created")
-			return True
-		except sqlite3.Error as e:
-			#raise e
-			print("table already exists")
-			return False
+			conn = sqlite3.connect("tagus.db")
+			return conn
+		except Error as e:
+			print(e)
+		return conn
 
-	def insert(self, row):
-		conn = self.conn()
-		cursor = conn.cursor()
-		query = """INSERT INTO TAGUS_DB
-			('qte', 'label', 'prix_u', 'prix_t', 'ref', 'date_instant')
-			VALUES (?, ?, ?, ?, ?, ?);"""
-		data_tuple = (row[0], row[1], row[2], row[3], row[4], row[5])
-		cursor.execute(query, data_tuple)
+	def create_table(self):
+		"""
+		create a table from the table sql statement
+		:param conn: Connection object
+		:param sql: a CREATE TABLE statement
+		:return:
+		"""
+		sql_produits = """CREATE TABLE IF NOT EXISTS produits (
+										id integer PRIMARY KEY AUTOINCREMENT,
+										label text NOT NULL,
+										prix integer NOT NULL,
+										fabriquant text
+										);"""
+
+		sql_solds = """CREATE TABLE IF NOT EXISTS solds (
+											id integer PRIMARY KEY AUTOINCREMENT,
+											qte integer NOT NULL,
+											produit_id integer NOT NULL,
+											cur_date timestamp,
+											FOREIGN KEY (produit_id) REFERENCES produits (id)
+											);"""
+		try:
+			conn = self.create_connection()
+			c = conn.cursor()
+			c.execute(sql_produits)
+			c.execute(sql_solds)
+			conn.commit()
+			c.close()
+			print("Created !")
+		except Error as e:
+			print(e)
+
+	def create_produit(self, produit):
+		"""
+		Crete a new produit into the produit table
+		:param conn:
+		:param produit:
+		:return: produit_id
+		"""
+		sql = """INSERT INTO produits(label,prix,fabriquant)
+				VALUES(?,?,?)"""
+		conn = self.create_connection()
+		cur = conn.cursor()
+		cur.execute(sql, produit)
 		conn.commit()
-		cursor.close()
-		print(row[1], " added successfully")
+		cur.close()
+		return cur.lastrowid
 
+	def create_sold(self, sold):
+		"""
+		Crete a new sold into the sold table
+		:param conn:
+		:param sold:
+		:return: produit_id
+		"""
+		sql = """INSERT INTO solds(qte,produit_id,cur_date)
+				VALUES(?,?,?)"""
+		conn = self.create_connection()
+		cur = conn.cursor()
+		cur.execute(sql, sold)
+		conn.commit()
+		cur.close()
+		return cur.lastrowid
 
-	def select(self, ref = []):
-		conn = self.conn()
+	def select_product(self):
+		conn = self.create_connection()
 		cursor = conn.cursor()
-		query = """SELECT qte, label, prix_u, prix_t, ref, date_instant FROM TAGUS_DB
-			WHERE ref = ?"""
-		cursor.execute(query, (ref,))
-		records = cursor.fetchall()
-		for r in records:
-			print("label : ", r[1])
-			print("registring date : ", r[5])
-		cursor.close()
-
-	def select_all(self):
-		conn = self.conn()
-		cursor = conn.cursor()
-		query = """SELECT qte, label, prix_u, prix_t, ref, date_instant FROM TAGUS_DB"""
+		query = """SELECT label, prix, fabriquant FROM produits"""
 		cursor.execute(query)
 		records = cursor.fetchall()
+		l = []
 		for r in records:
-			print("label : ", r[1])
-			print("registring date : ", r[5])
-		cursor.close()
+			l.append({"label":r[0], "prix":r[1], "fabriquant":r[2]})
+		return l
 
 if __name__ == '__main__':
-	c = Connection()
-	t = c.create()
-	c.insert([12, "Drone inspire 1", 600000, 12*600000, "ref-1", datetime.datetime.now()])
-	c.insert([17, "Drone phantom", 60000, 17*60000, "ref-2", datetime.datetime.now()])
-	c.insert([1, "Drone inspire 2", 900000, 1*600000, "ref-5", datetime.datetime.now()])
-	c.insert([7, "Drone mavic pro", 1000000, 7*60000, "ref-22", datetime.datetime.now()])
-	c.select(ref = "ref-1")
-	c.select_all()
-	print(t)
+	d = "tagus.db"
+	t = Connexion()
+	t.create_table()
+
+	produit = ("Drone DJI phantom 4", 500000, "DJI")
+	produit1 = ("Drone DJI Mavic pro 2", 800000, "DJI")
+	produit2 = ("Drone DJI Inspire 1", 700000, "DJI")
+
+	sold = (2, 2, datetime.datetime.now())
+	sold1 = (1, 1, datetime.datetime.now())
+	sold2 = (5, 0, datetime.datetime.now())
+	sold3 = (20, 1, datetime.datetime.now())
+
+	i = t.create_produit(produit)
+	print(i)
+	t.create_produit(produit1)
+	t.create_produit(produit2)
+
+	t.create_sold(sold)
+	t.create_sold(sold1)
+	t.create_sold(sold2)
+	t.create_sold(sold3)
