@@ -41,7 +41,7 @@
                     document.getElementById("livraison").value = document.getElementById("select").value;
                   }
                   function total(r){
-                    document.getElementById("pp").innerHTML = "---- "+i+" ----";
+                    
                     var i = r.parentNode.parentNode.rowIndex;
                     var x = document.getElementById("dataTable").rows[i].cells;
                     
@@ -76,24 +76,22 @@
                     cel4.innerHTML = "<input id=\"total\" disabled class=\"form-control form-control-sm\" placeholder=\"0\">";
                     cel5.innerHTML = "<input id=\"bt\" class=\"btn_del_row page-link\" type=\"button\" value=\"x\" onclick=\"deleteRow(this)\">";
                   }
-                  function somme() {
-                    var x = document.getElementById("myTable").rows[0].cells;
-                    x[0].innerHTML = "NEW CONTENT";
-                    var table = document.getElementById("tbl");
-               
-                      for (var i = 0 ; i < table.rows.length; i++) {
-               
-                          var row = "";
-               
-                          for (var j = 0; j < table.rows[i].cells.length; j++) {
-               
-                              row += table.rows[i].cells[j].innerHTML;
-                              row += " | ";
-                          }
-               
-                          alert(row);
+                  function sum_tht(t) {
+                     
+                      var som = 0;
+                      var table = document.getElementById("dataTable");
+                      
+                      for(var r = 1 ; r <= (table.rows.length-4); r++) {
+                          som += parseInt(table.rows[r].cells[3].childNodes[0].value);
                       }
+                      document.getElementById("tht").value = som;
+                      document.getElementById("tva").value = document.getElementById("tht").value * 0.2;
+                      var tmp = 
+                      document.getElementById("ttc").value = Number(document.getElementById("tht").value)  + Number(document.getElementById("tva").value);
+                      
                   }
+                  
+                  
                 </script>
                 <style>
                   .btn_add_row {
@@ -431,19 +429,20 @@
                             <td></td>
                       </tr>
                       <tr>
-                            <td colspan="2" style="text-align:center; color:red;"><b>Livraison à Domicile</b></td>
+                            <td ></td>
+                            <td class="hide_left" style=" color:red;"><b>Livraison à Domicile</b></td>
                             <td>
                                   <select id="select" class="custom-select custom-select-sm" onchange="livraison(this)">
                                         <option value="0">Livraison gratuite (0FCFA)</option>
                                         <option value="1000"> Livraison Facturée (1000FCFA)</option>               
                                   </select>
                             </td>
-                            <td><input id="livraison" disabled class="form-control form-control-sm" placeholder="0"></td>
+                            <td><input id="livraison" disabled class="form-control form-control-sm" value="0" placeholder="0"></td>
                             <td></td>
                       </tr>
                       <tr class="">
-                            <td class="hide_left"></td>
-                            <td class="hide_left"></td>
+                            
+                            <td colspan="2" class="hide_left"></td>
                             <td class="hide_left" style="text-align:left;"><b>Total Hors Taxe</b></td>
                             <td class="hide_left"><input id="tht" disabled class="form-control form-control-sm" placeholder="0.00"></td>
                             <td class="hide_right hide_left"><input id="bt" class="btn_del_row page-link" type="button" value="Calculer" onclick="sum_tht(this)"></td>
@@ -452,15 +451,15 @@
                             <td ></td>
                             <td ></td>
                             <td style="text-align:left;"><b>TVA </b>à 20%</td>
-                            <td><input id="tva" disabled class="form-control form-control-sm" placeholder="1000"></td>
-                            <td><input id="bt" class="btn_del_row page-link" type="button" value="Appliquer" onclick="calculate_tva(this)"></td>
+                            <td><input id="tva" disabled class="form-control form-control-sm" placeholder=""></td>
+                            <td></td>
                       </tr>
                       <tr class="hide_all">
                             <td ></td>
                             <td ></td>
                             <td style="text-align:left;"><b>Total TTC </b>en FCFA</td>
                             <td><input id="ttc" disabled class="form-control form-control-sm" placeholder="0.00"></td>
-                            <td><input id="bt" class="btn_del_row page-link" type="button" value="Calculer" onclick="sum_ttc(this)"></td>
+                            <td></td>
                       </tr>
                       
                       <input id="btn" type="button" aria-controls="dataTable" value="+" class="btn_add_row page-link" onclick="addRow()" >
