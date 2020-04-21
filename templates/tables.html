@@ -21,17 +21,40 @@
   <!-- Custom styles for this page -->
   <link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet') }}">
                 <script type="text/javascript">
+                  
                   function getSelectedValue(r){
-                    document.getElementById("price").value = document.getElementById("product").value;
-                    document.getElementById("total").value = document.getElementById("product").value * document.getElementById("quantite").value + 1000
+                    
+                    var i = r.parentNode.parentNode.rowIndex;
+                    var x = document.getElementById("dataTable").rows[i].cells;
+                    
+                    if (i == 1) {
+                        document.getElementById("price").value = document.getElementById("product").value;
+                        document.getElementById("total").value = document.getElementById("product").value * document.getElementById("quantite").value;
+                    } else {
+                        x[2].childNodes[0].value = x[1].childNodes[0].value;
+                        x[3].childNodes[0].value = x[0].childNodes[0].value * x[2].childNodes[0].value;
+                    }
                   }
+                   
                   function livraison(r) {
                     // body...
-                    document.getElementById("livraison").value = document.getElementById("select").value
+                    document.getElementById("livraison").value = document.getElementById("select").value;
                   }
                   function total(r){
-                    document.getElementById("total").value = document.getElementById("product").value * document.getElementById("quantite").value + 1000
-                  }   
+                    document.getElementById("pp").innerHTML = "---- "+i+" ----";
+                    var i = r.parentNode.parentNode.rowIndex;
+                    var x = document.getElementById("dataTable").rows[i].cells;
+                    
+                    
+                    if (i == 1) {
+                        document.getElementById("total").value = document.getElementById("quantite").value * document.getElementById("price").value;
+                    } else {
+                        x[3].childNodes[0].value = x[0].childNodes[0].value * x[2].childNodes[0].value;
+                    }
+                    
+                  }
+
+
                   function deleteRow(r) {
                     var i = r.parentNode.parentNode.rowIndex;
                     document.getElementById("dataTable").deleteRow(i);
@@ -48,8 +71,8 @@
                     
                     
                     cel1.innerHTML = "<input id=\"quantite\" type=\"number\" class=\"form-control form-control-sm\"  onchange=\"total(this)\" placeholder=\"0\">";
-                    cel2.innerHTML = "<select id=\"product\" class=\"custom-select custom-select-sm\" onchange=\"getSelectedValue(this)\"><option value=\"None\"> -- Selectionner un Produit --</option> {% for d in data %} <option value=\"{{ d.prix }}\"> {{ d.label }} </option> {% endfor %} </select>";
-                    cel3.innerHTML = "<input id=\"price\" disabled class=\"form-control form-control-sm\" placeholder=\"0\">";
+                    cel2.innerHTML = "<select id=\"product\" class=\"custom-select custom-select-sm\" onchange=\"getSelectedValue(this)\"><option value=\"0.00\"> -- Selectionner un Produit --</option> {% for d in data %} <option value=\"{{ d.prix }}\"> {{ d.label }} </option> {% endfor %} </select>";
+                    cel3.innerHTML = "<input id=\"price\" disabled class=\"form-control form-control-sm\" value=\"0\" placeholder=\"0\">";
                     cel4.innerHTML = "<input id=\"total\" disabled class=\"form-control form-control-sm\" placeholder=\"0\">";
                     cel5.innerHTML = "<input id=\"bt\" class=\"btn_del_row page-link\" type=\"button\" value=\"x\" onclick=\"deleteRow(this)\">";
                   }
@@ -375,7 +398,7 @@
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                
+                <p id="pp">Test</p>
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
@@ -397,15 +420,15 @@
                             <td><input id="quantite" type="number" class="form-control form-control-sm"  onchange="total(this)" placeholder="0"></td>
                             <td>
                                   <select id="product" class="custom-select custom-select-sm" onchange="getSelectedValue(this)">
-                                        <option value="None"> -- Selectionner un Produit --</option>
+                                        <option value="0.00"> -- Selectionner un Produit --</option>
                                         {% for d in data %}
                                         <option value="{{ d.prix }}"> {{ d.label }}</option>
                                         {% endfor %}
                                   </select>
                             </td>
-                            <td><input id="price" disabled class="form-control form-control-sm" placeholder="0"></td>                        
+                            <td><input id="price" disabled class="form-control form-control-sm" value="0" placeholder="0"></td>                        
                             <td><input id="total" disabled class="form-control form-control-sm" placeholder="0"></td>
-                            <td><input id="bt" class="btn_del_row page-link" type="button" value="x" onclick="deleteRow(this)"></td>
+                            <td></td>
                       </tr>
                       <tr>
                             <td colspan="2" style="text-align:center; color:red;"><b>Livraison à Domicile</b></td>
@@ -415,7 +438,7 @@
                                         <option value="1000"> Livraison Facturée (1000FCFA)</option>               
                                   </select>
                             </td>
-                            <td><input id="livraison" disabled class="form-control form-control-sm" placeholder="1000"></td>
+                            <td><input id="livraison" disabled class="form-control form-control-sm" placeholder="0"></td>
                             <td></td>
                       </tr>
                       <tr class="">
