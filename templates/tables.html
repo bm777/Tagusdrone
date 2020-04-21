@@ -25,6 +25,10 @@
                     document.getElementById("price").value = document.getElementById("product").value;
                     document.getElementById("total").value = document.getElementById("product").value * document.getElementById("quantite").value + 1000
                   }
+                  function livraison(r) {
+                    // body...
+                    document.getElementById("livraison").value = document.getElementById("select").value
+                  }
                   function total(r){
                     document.getElementById("total").value = document.getElementById("product").value * document.getElementById("quantite").value + 1000
                   }   
@@ -35,7 +39,7 @@
                   function addRow() {
                     // body...
                     var table = document.getElementById("dataTable");
-                    var row = table.insertRow(table.rows.length);
+                    var row = table.insertRow(table.rows.length-4);
                     var cel1 = row.insertCell(0);
                     var cel2 = row.insertCell(1);
                     var cel3 = row.insertCell(2);
@@ -49,7 +53,24 @@
                     cel4.innerHTML = "<input id=\"total\" disabled class=\"form-control form-control-sm\" placeholder=\"0\">";
                     cel5.innerHTML = "<input id=\"bt\" class=\"btn_del_row page-link\" type=\"button\" value=\"x\" onclick=\"deleteRow(this)\">";
                   }
-                  
+                  function somme() {
+                    var x = document.getElementById("myTable").rows[0].cells;
+                    x[0].innerHTML = "NEW CONTENT";
+                    var table = document.getElementById("tbl");
+               
+                      for (var i = 0 ; i < table.rows.length; i++) {
+               
+                          var row = "";
+               
+                          for (var j = 0; j < table.rows[i].cells.length; j++) {
+               
+                              row += table.rows[i].cells[j].innerHTML;
+                              row += " | ";
+                          }
+               
+                          alert(row);
+                      }
+                  }
                 </script>
                 <style>
                   .btn_add_row {
@@ -76,6 +97,20 @@
                     margin: 4px 2px;
                     cursor: pointer;
                   }
+
+                  tr.hide_all > td, td.hide_all{
+                    border-style:hidden;
+                  }
+                  tr.hide_right > td, td.hide_right{
+                    border-right-style:hidden;
+                  }
+                  tr.hide_left > td, td.hide_left{
+                    border-left-style:hidden;
+                  }
+                  tr.hide_bottom > td, td.hide_bottom{
+                    border-bottom-style:hidden;
+                  }
+     
               </style>
 </head>
 
@@ -357,26 +392,52 @@
                   </thead>
                   
                   <tbody>
+                      
                       <tr>
-                        <td colspan="3" style="text-align:center">Livraison à domicile</td>
-                        <td><input id="livraison" disabled class="form-control form-control-sm" placeholder="1000"></td>
-                        <td></td>
+                            <td><input id="quantite" type="number" class="form-control form-control-sm"  onchange="total(this)" placeholder="0"></td>
+                            <td>
+                                  <select id="product" class="custom-select custom-select-sm" onchange="getSelectedValue(this)">
+                                        <option value="None"> -- Selectionner un Produit --</option>
+                                        {% for d in data %}
+                                        <option value="{{ d.prix }}"> {{ d.label }}</option>
+                                        {% endfor %}
+                                  </select>
+                            </td>
+                            <td><input id="price" disabled class="form-control form-control-sm" placeholder="0"></td>                        
+                            <td><input id="total" disabled class="form-control form-control-sm" placeholder="0"></td>
+                            <td><input id="bt" class="btn_del_row page-link" type="button" value="x" onclick="deleteRow(this)"></td>
                       </tr>
                       <tr>
-                        <td><input id="quantite" type="number" class="form-control form-control-sm"  onchange="total(this)" placeholder="0"></td>
-                        <td>
-                          <select id="product" class="custom-select custom-select-sm" onchange="getSelectedValue(this)">
-                            <option value="None"> -- Selectionner un Produit --</option>
-                          {% for d in data %}
-                            <option value="{{ d.prix }}"> {{ d.label }}</option>
-                          {% endfor %}
-                        </select>
-                         </td>
-                         <td><input id="price" disabled class="form-control form-control-sm" placeholder="0"></td>
-                         
-                        
-                        <td><input id="total" disabled class="form-control form-control-sm" placeholder="0"></td>
-                        <td><input id="bt" class="btn_del_row page-link" type="button" value="X" onclick="deleteRow(this)"></td>
+                            <td colspan="2" style="text-align:center; color:red;"><b>Livraison à Domicile</b></td>
+                            <td>
+                                  <select id="select" class="custom-select custom-select-sm" onchange="livraison(this)">
+                                        <option value="0">Livraison gratuite (0FCFA)</option>
+                                        <option value="1000"> Livraison Facturée (1000FCFA)</option>               
+                                  </select>
+                            </td>
+                            <td><input id="livraison" disabled class="form-control form-control-sm" placeholder="1000"></td>
+                            <td></td>
+                      </tr>
+                      <tr class="">
+                            <td class="hide_left"></td>
+                            <td class="hide_left"></td>
+                            <td class="hide_left" style="text-align:left;"><b>Total Hors Taxe</b></td>
+                            <td class="hide_left"><input id="tht" disabled class="form-control form-control-sm" placeholder="0.00"></td>
+                            <td class="hide_right hide_left"><input id="bt" class="btn_del_row page-link" type="button" value="Calculer" onclick="sum_tht(this)"></td>
+                      </tr>
+                      <tr class="hide_all">
+                            <td ></td>
+                            <td ></td>
+                            <td style="text-align:left;"><b>TVA </b>à 20%</td>
+                            <td><input id="tva" disabled class="form-control form-control-sm" placeholder="1000"></td>
+                            <td><input id="bt" class="btn_del_row page-link" type="button" value="Appliquer" onclick="calculate_tva(this)"></td>
+                      </tr>
+                      <tr class="hide_all">
+                            <td ></td>
+                            <td ></td>
+                            <td style="text-align:left;"><b>Total TTC </b>en FCFA</td>
+                            <td><input id="ttc" disabled class="form-control form-control-sm" placeholder="0.00"></td>
+                            <td><input id="bt" class="btn_del_row page-link" type="button" value="Calculer" onclick="sum_ttc(this)"></td>
                       </tr>
                       
                       <input id="btn" type="button" aria-controls="dataTable" value="+" class="btn_add_row page-link" onclick="addRow()" >
