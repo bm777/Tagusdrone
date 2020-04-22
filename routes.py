@@ -14,3 +14,7 @@ def tables():
 @app.route('/index')
 def index():
 	return render_template('index.html')
+
+@app.route('/proformat')
+def proformat():
+	return render_template('proformat.html')
