@@ -43,11 +43,57 @@ class Connexion(object):
 											cur_date timestamp,
 											FOREIGN KEY (produit_id) REFERENCES produits (id)
 											);"""
+
+		sql_employes = """CREATE TABLE IF NOT EXISTS employes (
+											id integer PRIMARY KEY AUTOINCREMENT,
+											nom integer NOT NULL,
+											role text NOT NULL,
+											cni integer NOT NULL,
+											tel text NOT NULL,
+											mail text NOT NULL
+											);"""
+		
+		sql_depenses = """CREATE TABLE IF NOT EXISTS depenses (
+											id integer PRIMARY KEY AUTOINCREMENT,
+											label_produit text NOT NULL,
+											prix integer NOT NULL,
+											quantite integer NOT NULL,
+											employe_id integer NOT NULL,
+											cur_date timestamp,
+											FOREIGN KEY (employe_id) REFERENCES employes (id)
+											);"""
+
+		sql_mouvements = """CREATE TABLE IF NOT EXISTS mouvements (
+											id integer PRIMARY KEY AUTOINCREMENT,
+											employe_id integer NOT NULL,
+											motif text NOT NULL,
+											FOREIGN KEY (employe_id) REFERENCES employes (id)
+											);"""
+
+		sql_departs = """CREATE TABLE IF NOT EXISTS departs (
+											id integer PRIMARY KEY AUTOINCREMENT,
+											mouvement_id integer NOT NULL,
+											depart timestamp,
+											FOREIGN KEY (mouvement_id) REFERENCES mouvements (id)
+											);"""
+
+		sql_arrivees = """CREATE TABLE IF NOT EXISTS arrivees (
+											id integer PRIMARY KEY AUTOINCREMENT,
+											depart_id integer NOT NULL,
+											arrivee timestamp,
+											FOREIGN KEY (depart_id) REFERENCES departs (id)
+											);"""
+
 		try:
 			conn = self.create_connection()
 			c = conn.cursor()
 			c.execute(sql_produits)
 			c.execute(sql_solds)
+			c.execute(sql_employes)
+			c.execute(sql_departs)
+			c.execute(sql_mouvements)
+			c.execute(sql_depenses)
+			c.execute(sql_arrivees)
 			conn.commit()
 			c.close()
 			print("Created !")

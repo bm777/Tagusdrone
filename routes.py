@@ -1,6 +1,6 @@
-from app import app
+from . import *
 from flask import render_template
-from app.db import Connexion
+from .db import Connexion
 
 
 @app.route('/tables')
