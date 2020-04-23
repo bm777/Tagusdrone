@@ -14,7 +14,7 @@ echo "------ Updating -> .bashrc---------- "
 
 echo "#Virtualenvwrapper settings:
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-export WORKON_HOME=$HOME/.virt
+export WORKON_HOME=$HOME/.vir
 export VIRTUALENVWRAPPER_VIRTUALENV=$HOME/.local/bin/virtualenv
 source ~/.local/bin/virtualenvwrapper.sh" >> ~/.bashrc
 source ~/.bashrc
